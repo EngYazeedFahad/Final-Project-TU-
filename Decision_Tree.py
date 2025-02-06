@@ -242,7 +242,7 @@ def DT_Final():
         plt.show()
 
     # Overfitting/Underfitting Indicator
-    diff_threshold = 0.12
+    diff_threshold = 0.10
     accuracy_diff = train_accuracy - test_accuracy
 
     if accuracy_diff > diff_threshold:
