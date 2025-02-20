@@ -7,7 +7,7 @@
 #Project Advisor Prof. Httan Ali Asiri
 #----------------------------------------------------------------------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------------------#
-
+#Support Vector Classifier
 
 #This is the initial code to find the best hyperparameter
 def initial():
@@ -21,9 +21,6 @@ def initial():
     from sklearn.metrics import (
         confusion_matrix,
         classification_report,
-        roc_curve,
-        auc,
-        ConfusionMatrixDisplay
     )
     import warnings
     from sklearn.exceptions import ConvergenceWarning
@@ -83,8 +80,8 @@ def initial():
     grid_search.fit(X_train, y_train)
 
     # Display the best parameters and best score
+    print("SVC:")
     print("Best Parameters:", grid_search.best_params_)
-    print("Best Cross-Validation Accuracy:", grid_search.best_score_)
 
     # Retrieve the best estimator
     best_svc = grid_search.best_estimator_
@@ -98,30 +95,29 @@ def initial():
 
     # Make predictions on the test set
     y_pred = best_svc.predict(X_test)
-    print('Predicted Values for SVCModel (first 5): ', y_pred[:5])
 
     # Confusion Matrix
     CM = confusion_matrix(y_test, y_pred)
     print('Confusion Matrix:\n', CM)
 
-    # Get unique class labels
-    class_labels = np.unique(y)
+    # Define class labels
+    labels = ["Without Complication", "With Complication"]
 
     # Plot the confusion matrix using seaborn
     sns.heatmap(
         CM, annot=True, fmt='d', cmap='Blues',
-        xticklabels=[f'Class {label}' for label in class_labels],
-        yticklabels=[f'Class {label}' for label in class_labels]
+        xticklabels=labels,
+        yticklabels=labels
     )
     plt.xlabel('Predicted')
     plt.ylabel('Actual')
-    plt.title('Confusion Matrix')
+    plt.title('Confusion Matrix - SVC')
     plt.show()
 
     # Classification Report
     Report = classification_report(
         y_test, y_pred,
-        target_names=[f'Class {label}' for label in class_labels]
+        target_names=labels
     )
     print("Classification Report:\n", Report)
 
@@ -168,8 +164,8 @@ def Gamma_And_C_parameter():
 
     # Define the parameter grid
     param_grid = {
-        'gamma': [1,2,3,4,5,6,7,8,9,10],  # Gamma values to test
-        'C': [1, 2,3,4,5,6,7,8,9,10]  # Optional: Test different C values
+        'gamma': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],  # Gamma values to test
+        'C': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # Optional: Test different C values
     }
 
     # Initialize the SVC model
@@ -194,24 +190,24 @@ def Gamma_And_C_parameter():
 
     # Evaluate the best model on the test set
     test_score = best_model.score(X_test, y_test)
-
+    print("SVC")
     # Print the results
     print("Best Parameters:", best_params)
-    print("Best Cross-Validation Score:", grid_search.best_score_)
+
     print("Test Score with Best Parameters:", test_score)
 
     # Train Confusion Matrix
     y_pred = best_model.predict(X_test)
     CM = confusion_matrix(y_test, y_pred)
 
-    # Get unique class labels
-    class_labels = np.unique(y)
+    # Define class labels
+    labels = ["Without Complication", "With Complication"]
 
     # Plot the confusion matrix using seaborn
     sns.heatmap(
         CM, annot=True, fmt='d', cmap='Blues',
-        xticklabels=[f'Class {label}' for label in class_labels],
-        yticklabels=[f'Class {label}' for label in class_labels]
+        xticklabels=labels,
+        yticklabels=labels
     )
     plt.xlabel('Predicted')
     plt.ylabel('Actual')
@@ -221,9 +217,10 @@ def Gamma_And_C_parameter():
     # Classification Report
     Report = classification_report(
         y_test, y_pred,
-        target_names=[f'Class {label}' for label in class_labels]
+        target_names=labels
     )
     print("Classification Report (Best Model):\n", Report)
+
 
 #----------------------------------------------------------------------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------------------#
@@ -286,26 +283,28 @@ def Final_Model():
     # Evaluate the model on the training and testing sets
     train_accuracy = svc.score(X_train, y_train)
     test_accuracy = svc.score(X_test, y_test)
-
+    print("SVC:")
     print("Train Accuracy:", train_accuracy)
     print("Test Accuracy:", test_accuracy)
 
     # Make predictions on the test set
     y_pred = svc.predict(X_test)
-    print('Predicted Values for SVCModel (first 5):', y_pred[:5])
 
     # Confusion Matrix
     CM = confusion_matrix(y_test, y_pred)
     print('Confusion Matrix:\n', CM)
 
+    # Define class labels
+    labels = ["Without Complication", "With Complication"]
+
     # Display Confusion Matrix
-    disp = ConfusionMatrixDisplay(confusion_matrix=CM)
+    disp = ConfusionMatrixDisplay(confusion_matrix=CM, display_labels=labels)
     disp.plot(cmap=plt.cm.Greens)
-    plt.title("Confusion Matrix")
+    plt.title("Confusion Matrix - SVC")
     plt.show()
 
     # Classification Report
-    Report = classification_report(y_test, y_pred)
+    Report = classification_report(y_test, y_pred, target_names=labels)
     print("Classification Report:\n", Report)
 
     # Compute AUC if binary classification
@@ -317,13 +316,13 @@ def Final_Model():
         print("Test AUC:", roc_auc)
 
         plt.figure()
-        plt.plot(fpr, tpr, label="ROC curve (AUC = %0.2f)" % roc_auc)
+        plt.plot(fpr, tpr, label="ROC curve (AUC = %0.2f)" % roc_auc, color='purple')  # Changed color to purple
         plt.plot([0, 1], [0, 1], "r--")  # Diagonal line for random classifier
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
         plt.xlabel("False Positive Rate")
         plt.ylabel("True Positive Rate")
-        plt.title("Receiver Operating Characteristic")
+        plt.title("Receiver Operating Characteristic - SVC")
         plt.legend(loc="lower right")
         plt.show()
 
@@ -346,14 +345,14 @@ def Final_Model():
     plt.xlabel('Class Labels')
     plt.ylabel('Number of Samples')
     plt.title('Class Distribution in Train and Test Sets')
-    plt.xticks(classes)
+    plt.xticks(classes, labels)
     plt.legend(loc='upper right')
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.tight_layout()
     plt.show()
 
     # Overfitting/Underfitting Indicator
-    diff_threshold = 0.12
+    diff_threshold = 0.10
     accuracy_diff = train_accuracy - test_accuracy
 
     if accuracy_diff > diff_threshold:
@@ -364,9 +363,8 @@ def Final_Model():
               f"(Train = {train_accuracy:.2f}, Test = {test_accuracy:.2f}).")
     else:
         print("\nIndicator: The model does not appear to be significantly overfit or underfit.")
-
-
 Final_Model()
+
 
 
 
