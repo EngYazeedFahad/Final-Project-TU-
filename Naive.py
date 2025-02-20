@@ -83,8 +83,8 @@ def GNB():
         if test_acc >= accuracy_threshold:
             print(f"\nThreshold reached at iteration {i} with Test Accuracy = {test_acc:.4f}!")
             break
-
-    print("\nBest Model Summary:")
+    print("Gaussian Naïve Bayes")
+    print("Best Model Summary:")
     print(f"Best var_smoothing: {best_var_smoothing:.2e}")
     print(f"Best Test Accuracy: {best_accuracy:.4f}")
 
@@ -94,7 +94,8 @@ def GNB():
     test_accuracy = best_model.score(X_test, y_test)  # Testing accuracy
 
     print("\nClassification Report:")
-    print(classification_report(y_test, y_pred, target_names=[f"Class {label}" for label in np.unique(y)]))
+    labels = ["Without Complication", "With Complication"]
+    print(classification_report(y_test, y_pred, target_names=labels))
 
     # Overfitting/Underfitting Indicator
     diff_threshold = 0.10
@@ -111,14 +112,17 @@ def GNB():
 
     # Plot the confusion matrix using seaborn
     CM = confusion_matrix(y_test, y_pred)
+    plt.figure(figsize=(8, 6))
     sns.heatmap(
         CM, annot=True, fmt='d', cmap='copper',
-        xticklabels=[f'Class {label}' for label in np.unique(y)],
-        yticklabels=[f'Class {label}' for label in np.unique(y)]
+        xticklabels=labels,
+        yticklabels=labels
     )
-    plt.xlabel('Predicted')
-    plt.ylabel('Actual')
-    plt.title('Confusion Matrix - Naive bayes (GaussianNB)')
+    plt.xticks(rotation=0)
+    plt.yticks(rotation=90)
+    plt.xlabel('Predicted label')
+    plt.ylabel('True label')
+    plt.title('Confusion Matrix - Naive Bayes (GaussianNB)')
     plt.show()
 
     # If binary classification, plot ROC curve and compute AUC
@@ -129,13 +133,13 @@ def GNB():
         print("Test AUC:", roc_auc)
 
         plt.figure()
-        plt.plot(fpr, tpr, label=f"ROC curve (AUC = {roc_auc:.2f})")
+        plt.plot(fpr, tpr, label=f"ROC curve (AUC = {roc_auc:.2f})", color='deeppink', linewidth=2)
         plt.plot([0, 1], [0, 1], "r--")
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
         plt.xlabel("False Positive Rate")
         plt.ylabel("True Positive Rate")
-        plt.title("Receiver Operating Characteristic - Naive bayes (GaussianNB) ")
+        plt.title("Receiver Operating Characteristic - Naive Bayes (GaussianNB)")
         plt.legend(loc="lower right")
         plt.show()
 
