@@ -68,18 +68,26 @@ def KNN_Grid_Search():
     # Accuracy scores
     train_accuracy = grid_search.score(X_train, y_train)
     test_accuracy = accuracy_score(y_test, y_pred)
+    print("K-Nearest Neighbors (KNN)")
     print("Train Accuracy:", train_accuracy)
     print("Test Accuracy:", test_accuracy)
 
     # Confusion Matrix
     CM = confusion_matrix(y_test, y_pred)
     print("\nConfusion Matrix:\n", CM)
-    print("\nClassification Report:\n", classification_report(y_test, y_pred))
 
-    disp = ConfusionMatrixDisplay(confusion_matrix=CM)
+    # Define class labels
+    labels = ["Without Complication", "With Complication"]
+
+    # Display Confusion Matrix
+    disp = ConfusionMatrixDisplay(confusion_matrix=CM, display_labels=labels)
     disp.plot(cmap=plt.cm.tab20c)
     plt.title("Confusion Matrix - KNN")
     plt.show()
+
+    # Classification Report
+    Report = classification_report(y_test, y_pred, target_names=labels)
+    print("\nClassification Report:\n", Report)
 
     # ROC Curve
     unique_labels = np.unique(y_test)
@@ -115,7 +123,7 @@ def KNN_Grid_Search():
     plt.xlabel('Class Labels')
     plt.ylabel('Number of Samples')
     plt.title('Class Distribution in Train and Test Sets - KNN')
-    plt.xticks(classes)
+    plt.xticks(classes, labels)
     plt.legend(loc='upper right')
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.tight_layout()
