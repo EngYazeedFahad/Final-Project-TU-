@@ -7,7 +7,7 @@
 #Project Advisor Prof. Httan Ali Asiri
 #---------------------------------------------------------------------------------------------------------------------#
 
-#Initial model
+#Initial Decision Tree Classifier  model
 def DT_Random_Search():
     import pandas as pd
     import numpy as np
@@ -84,6 +84,7 @@ def DT_Random_Search():
             best_model = model
             best_params = params
 
+    print("Decision Tree")
     print("Best Hyperparameters :", best_params)
 
     # Evaluate the best model
@@ -94,19 +95,23 @@ def DT_Random_Search():
 
     # Make predictions
     y_pred = best_model.predict(X_test)
-    print('Predicted Values for DecisionTree (first 5):', y_pred[:5])
+
 
     # Confusion Matrix
     CM = confusion_matrix(y_test, y_pred)
     print('Confusion Matrix:\n', CM)
 
-    disp = ConfusionMatrixDisplay(confusion_matrix=CM)
-    disp.plot(cmap="OrRd")
+    # Define class labels
+    class_labels = ["Without Complication", "With Complication"]
+
+    # Confusion Matrix with labels
+    disp = ConfusionMatrixDisplay(confusion_matrix=CM, display_labels=class_labels)
+    disp.plot(cmap="Accent")  # Matching the warm color scheme
     plt.title("Confusion Matrix - Decision Tree")
     plt.show()
 
-    # Classification Report
-    Report = classification_report(y_test, y_pred)
+    # Classification Report with labels
+    Report = classification_report(y_test, y_pred, target_names=class_labels)
     print("Classification Report:\n", Report)
 
     # Compute AUC if binary classification
@@ -206,21 +211,25 @@ def DT_Final():
 
     # Make predictions
     y_pred = best_dt.predict(X_test)
-    print('Predicted Values for DecisionTree (first 5):', y_pred[:5])
+
 
     # Confusion Matrix
     CM = confusion_matrix(y_test, y_pred)
     print('Confusion Matrix:\n', CM)
 
-    # Display Confusion Matrix with warm colors
-    disp = ConfusionMatrixDisplay(confusion_matrix=CM)
+    # Define class labels
+    class_labels = ["Without Complication", "With Complication"]
+
+    # Confusion Matrix with labels
+    disp = ConfusionMatrixDisplay(confusion_matrix=CM, display_labels=class_labels)
     disp.plot(cmap="Accent")  # Warm color scheme
     plt.title("Confusion Matrix - Decision Tree")
     plt.show()
 
-    # Classification Report
-    Report = classification_report(y_test, y_pred)
+    # Classification Report with labels
+    Report = classification_report(y_test, y_pred, target_names=class_labels)
     print("Classification Report:\n", Report)
+
 
     # Compute AUC if binary classification
     unique_labels = np.unique(y_test)
@@ -253,6 +262,6 @@ def DT_Final():
               f"(Train = {train_accuracy:.2f}, Test = {test_accuracy:.2f}).")
     else:
         print("\nIndicator: The model does not appear to be significantly overfit or underfit.")
-
 DT_Final()
+
 #---------------------------------------------------------------------------------------------------------------------#
