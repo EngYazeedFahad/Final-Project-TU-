@@ -6,7 +6,7 @@
 #Eng\Mohammed Altwirqi
 #Project Advisor Prof. Httan Ali Asiri
 #------------------------------------------------------------------------------------------------------#
-#Initial model
+#Initial Random Forest Classifier Model
 def RF_Random_Search():
     import pandas as pd
     import numpy as np
@@ -17,7 +17,7 @@ def RF_Random_Search():
     from sklearn.metrics import (accuracy_score, confusion_matrix, classification_report,
                                  roc_curve, auc, ConfusionMatrixDisplay)
 
-
+    # Load dataset
     dataset = pd.read_csv("processed_data.csv")
 
     X = dataset.iloc[:, :-1].values
@@ -41,12 +41,12 @@ def RF_Random_Search():
 
     # Define hyperparameter grid
     param_dist = {
-         'criterion': ['gini', 'entropy'],
-        'n_estimators': [100,250,300],
-        'max_depth': [40,50,70,90],
-        'min_samples_split': [28,29,30],
-        'min_samples_leaf': [1, 2,3,4,5,6,7,8,9],
-        'bootstrap': [True,False]
+        'criterion': ['gini', 'entropy'],
+        'n_estimators': [100, 250, 300],
+        'max_depth': [40, 50, 70, 90],
+        'min_samples_split': [28, 29, 30],
+        'min_samples_leaf': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+        'bootstrap': [True, False]
     }
 
     # Randomized search
@@ -62,10 +62,9 @@ def RF_Random_Search():
     )
 
     random_search.fit(X_train, y_train)
-
+    print("Random Forest:")
     # Best parameters and best model
     print("Best Parameters:", random_search.best_params_)
-
 
     best_model = random_search.best_estimator_
 
@@ -74,17 +73,20 @@ def RF_Random_Search():
     # Accuracy scores
     train_accuracy = random_search.score(X_train, y_train)
     test_accuracy = accuracy_score(y_test, y_pred)
+
     print("Train Accuracy:", train_accuracy)
     print("Test Accuracy :", test_accuracy)
 
     # Confusion Matrix
     CM = confusion_matrix(y_test, y_pred)
+    labels = ["Without Complication", "With Complication"]
     print("\nConfusion Matrix:\n", CM)
-    print("\nClassification Report:\n", classification_report(y_test, y_pred))
+    print("\nClassification Report:\n", classification_report(y_test, y_pred, target_names=labels))
 
-    disp = ConfusionMatrixDisplay(confusion_matrix=CM)
-    disp.plot(cmap=plt.cm.hot)
-    plt.title("Confusion Matrix")
+    # Update Confusion Matrix display
+    disp = ConfusionMatrixDisplay(confusion_matrix=CM, display_labels=labels)
+    disp.plot(cmap=plt.cm.terrain)  # Matching the color scheme
+    plt.title("Confusion Matrix For Random Forest")
     plt.show()
 
     # ROC Curve
@@ -96,13 +98,13 @@ def RF_Random_Search():
         print("Test AUC:", roc_auc)
 
         plt.figure()
-        plt.plot(fpr, tpr, label="ROC curve (AUC = %0.2f)" % roc_auc)
+        plt.plot(fpr, tpr, label="ROC curve (AUC = %0.2f)" % roc_auc, color='#228B22')  # Forest green color
         plt.plot([0, 1], [0, 1], "r--")
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
         plt.xlabel("False Positive Rate")
         plt.ylabel("True Positive Rate")
-        plt.title("Receiver Operating Characteristic")
+        plt.title("Receiver Operating Characteristic - Random Forest")
         plt.legend(loc="lower right")
         plt.show()
 
@@ -121,7 +123,7 @@ def RF_Random_Search():
     plt.xlabel('Class Labels')
     plt.ylabel('Number of Samples')
     plt.title('Class Distribution in Train and Test Sets')
-    plt.xticks(classes)
+    plt.xticks(classes, labels)
     plt.legend(loc='upper right')
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.tight_layout()
@@ -139,7 +141,6 @@ def RF_Random_Search():
               f"(Train = {train_accuracy:.2f}, Test = {test_accuracy:.2f}).")
     else:
         print("\nIndicator: The model does not appear to be significantly overfit or underfit.")
-
 
 
 #------------------------------------------------------------------------------------------------------#
@@ -174,7 +175,6 @@ def RF_Final():
     X_test = scaler.transform(X_test)
 
     # Manually set hyperparameters
-    # Best Parameters: {'n_estimators': 300, 'min_samples_split': 28, 'min_samples_leaf': 2, 'max_depth': 50, 'criterion': 'entropy', 'bootstrap': False}
     rf_model = RandomForestClassifier(
         criterion="entropy",
         n_estimators=250,  # Set desired number of trees
@@ -201,10 +201,13 @@ def RF_Final():
     # Confusion Matrix
     CM = confusion_matrix(y_test, y_pred)
     print("\nConfusion Matrix For Random Forest:\n", CM)
-    print("\nClassification Report:\n", classification_report(y_test, y_pred))
+
+    # Add class labels
+    labels = ["Without Complication", "With Complication"]
+    print("\nClassification Report:\n", classification_report(y_test, y_pred, target_names=labels))
 
     # Change the color map to forest-like colors
-    disp = ConfusionMatrixDisplay(confusion_matrix=CM)
+    disp = ConfusionMatrixDisplay(confusion_matrix=CM, display_labels=labels)
     disp.plot(cmap=plt.cm.terrain)  # Forest-like color palette
     plt.title("Confusion Matrix For Random Forest")
     plt.show()
@@ -224,7 +227,7 @@ def RF_Final():
         plt.ylim([0.0, 1.05])
         plt.xlabel("False Positive Rate")
         plt.ylabel("True Positive Rate")
-        plt.title("Receiver Operating Characteristic")
+        plt.title("Receiver Operating Characteristic - Random Forest")
         plt.legend(loc="lower right")
         plt.show()
 
@@ -243,7 +246,7 @@ def RF_Final():
     plt.xlabel('Class Labels')
     plt.ylabel('Number of Samples')
     plt.title('Class Distribution in Train and Test Sets')
-    plt.xticks(classes)
+    plt.xticks(classes, labels)
     plt.legend(loc='upper right')
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.tight_layout()
