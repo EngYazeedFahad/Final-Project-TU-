@@ -80,19 +80,22 @@ def GD_Random_Search():
 
     # Make predictions
     y_pred = best_model.predict(X_test)
-    print('Predicted Values for Gradient Boosting (first 5):', y_pred[:5])
 
     # Confusion Matrix
     CM = confusion_matrix(y_test, y_pred)
     print('Confusion Matrix:\n', CM)
 
-    disp = ConfusionMatrixDisplay(confusion_matrix=CM)
-    disp.plot(cmap="OrRd")
+    # Define class labels
+    labels = ["Without Complication", "With Complication"]
+
+    # Display Confusion Matrix
+    disp = ConfusionMatrixDisplay(confusion_matrix=CM, display_labels=labels)
+    disp.plot(cmap="magma")
     plt.title("Confusion Matrix - Gradient Boosting")
     plt.show()
 
     # Classification Report
-    Report = classification_report(y_test, y_pred)
+    Report = classification_report(y_test, y_pred, target_names=labels)
     print("Classification Report:\n", Report)
 
     # Compute AUC if binary classification
@@ -104,8 +107,8 @@ def GD_Random_Search():
         print("Test AUC:", roc_auc)
 
         plt.figure()
-        plt.plot(fpr, tpr, label="ROC curve (AUC = %0.2f)" % roc_auc, color='darkred')
-        plt.plot([0, 1], [0, 1], "r--")
+        plt.plot(fpr, tpr, label="ROC curve (AUC = %0.2f)" % roc_auc, color='darkblue')
+        plt.plot([0, 1], [0, 1], "g--")
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
         plt.xlabel("False Positive Rate")
@@ -187,24 +190,28 @@ def GD_Final():
     # Evaluate the model
     train_accuracy = best_model.score(X_train, y_train)
     test_accuracy = best_model.score(X_test, y_test)
+    print("Gradient Boosting")
     print("Train Accuracy:", train_accuracy)
     print("Test Accuracy:", test_accuracy)
 
     # Make predictions
     y_pred = best_model.predict(X_test)
-    print('Predicted Values for Gradient Boosting (first 5):', y_pred[:5])
 
     # Confusion Matrix
     CM = confusion_matrix(y_test, y_pred)
     print('Confusion Matrix:\n', CM)
 
-    disp = ConfusionMatrixDisplay(confusion_matrix=CM)
+    # Define class labels
+    labels = ["Without Complication", "With Complication"]
+
+    # Display Confusion Matrix
+    disp = ConfusionMatrixDisplay(confusion_matrix=CM, display_labels=labels)
     disp.plot(cmap="magma")
     plt.title("Confusion Matrix - Gradient Boosting")
     plt.show()
 
     # Classification Report
-    Report = classification_report(y_test, y_pred)
+    Report = classification_report(y_test, y_pred, target_names=labels)
     print("Classification Report:\n", Report)
 
     # Compute AUC if binary classification
@@ -239,5 +246,4 @@ def GD_Final():
               f"(Train = {train_accuracy:.2f}, Test = {test_accuracy:.2f}).")
     else:
         print("\nIndicator: The model does not appear to be significantly overfit or underfit.")
-
 GD_Final()
